@@ -1,0 +1,33 @@
+---
+# Default variables for SFTP/SSH role
+
+# SSH/SFTP Configuration
+sshd_port: 22
+sshd_protocol: 2
+sshd_permit_root_login: no
+sshd_pubkey_authentication: yes
+sshd_permit_empty_passwords: no
+sshd_challenge_response_authentication: no
+sshd_use_pam: yes
+sshd_log_level: "VERBOSE"
+sshd_syslog_facility: "AUTH"
+
+# SFTP subsystem configuration
+sftp_log_level: "INFO"  # Options: QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG, DEBUG1, DEBUG2, DEBUG3
+
+# Allowed groups for SSH/SFTP access
+sshd_allow_groups:
+  - "simpleftp"
+  - "admin"
+  - "wheel"
+
+# SFTP match group settings
+sftp_chroot_directory: "/data/%u"
+sftp_allow_tcp_forwarding: no
+sftp_x11_forwarding: no
+sftp_force_command: "internal-sftp -u 0002"
+sftp_password_authentication: yes
+sftp_max_sessions: 50
+
+# FTP user group (should match vsftpd role)
+ftp_user_group: "simpleftp"

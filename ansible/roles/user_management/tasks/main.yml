@@ -1,0 +1,61 @@
+---
+# Tasks for user management from JSON configuration
+
+- name: Create VSFTPD configuration directory
+  file:
+    path: /etc/vsftpd
+    state: directory
+    mode: '0755'
+
+- name: Create base data directory for user homes
+  file:
+    path: "{{ ftp_base_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Ensure FTP user group exists
+  group:
+    name: "{{ ftp_user_group }}"
+    state: present
+
+- name: Install jq for JSON parsing
+  package:
+    name: jq
+    state: present
+
+- name: Create empty users.json if it doesn't exist
+  copy:
+    content: "{}"
+    dest: "{{ user_config_file }}"
+    force: no
+    mode: '0644'
+
+- name: Deploy user synchronization script
+  template:
+    src: update_users.sh.j2
+    dest: /usr/local/bin/update_users.sh
+    mode: '0755'
+
+- name: Create log file for user updates
+  file:
+    path: "{{ user_sync_log_file }}"
+    state: touch
+    mode: '0666'
+    modification_time: preserve
+    access_time: preserve
+
+- name: Run initial user synchronization
+  command: /usr/local/bin/update_users.sh
+  register: user_sync_result
+  changed_when: "'Creating user' in user_sync_result.stdout"
+
+- name: Set up cron job for periodic user synchronization
+  cron:
+    name: "Synchronize FTP/SFTP users from JSON"
+    minute: "*/30"
+    hour: "*"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "/usr/local/bin/update_users.sh >> {{ user_sync_log_file }} 2>&1"
+    state: "{{ 'present' if enable_user_sync_cron else 'absent' }}"

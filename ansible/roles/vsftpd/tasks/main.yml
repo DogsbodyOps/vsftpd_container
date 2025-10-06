@@ -1,0 +1,88 @@
+---
+# Tasks for installing and configuring VSFTPD
+
+- name: Install VSFTPD package
+  package:
+    name: vsftpd
+    state: present
+
+- name: Create VSFTPD configuration directory
+  file:
+    path: "{{ vsftpd_conf_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Create secure chroot directory
+  file:
+    path: "{{ vsftpd_secure_chroot_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Create FTP user group
+  group:
+    name: "{{ ftp_user_group }}"
+    state: present
+
+- name: Create base data directory for user homes
+  file:
+    path: "{{ ftp_base_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Deploy VSFTPD configuration file
+  template:
+    src: vsftpd.conf.j2
+    dest: "{{ vsftpd_conf_dir }}/vsftpd.conf"
+    mode: '0644'
+  notify: restart vsftpd
+
+- name: Deploy VSFTPD banner file
+  copy:
+    content: "{{ vsftpd_banner_text }}"
+    dest: "{{ vsftpd_banner_file }}"
+    mode: '0644'
+  notify: restart vsftpd
+
+- name: Deploy vsftpd user_list file
+  template:
+    src: user_list.j2
+    dest: "{{ vsftpd_conf_dir }}/user_list"
+    mode: '0644'
+  notify: restart vsftpd
+
+- name: Deploy ftpusers file
+  template:
+    src: ftpusers.j2
+    dest: "{{ vsftpd_conf_dir }}/ftpusers"
+    mode: '0644'
+  notify: restart vsftpd
+
+- name: Add /sbin/nologin to valid shells
+  lineinfile:
+    path: /etc/shells
+    line: '/sbin/nologin'
+    state: present
+
+- name: Enable and start VSFTPD service
+  systemd:
+    name: vsftpd
+    enabled: yes
+    state: started
+
+- name: Configure firewall for FTP (port 21) if firewalld is running
+  firewalld:
+    service: ftp
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when: ansible_facts.services['firewalld.service'] is defined and ansible_facts.services['firewalld.service'].state == 'running'
+  ignore_errors: yes
+
+- name: Configure firewall for passive FTP ports if firewalld is running
+  firewalld:
+    port: "{{ vsftpd_pasv_min_port }}-{{ vsftpd_pasv_max_port }}/tcp"
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when: ansible_facts.services['firewalld.service'] is defined and ansible_facts.services['firewalld.service'].state == 'running'
+  ignore_errors: yes

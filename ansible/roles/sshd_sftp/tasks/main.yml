@@ -1,0 +1,50 @@
+---
+# Tasks for configuring SSH/SFTP
+
+- name: Install OpenSSH server package
+  package:
+    name: openssh-server
+    state: present
+
+- name: Ensure SSH service is enabled and started
+  systemd:
+    name: sshd
+    enabled: yes
+    state: started
+
+- name: Create FTP user group (if not already created)
+  group:
+    name: "{{ ftp_user_group }}"
+    state: present
+
+- name: Deploy SFTP configuration for chrooted users
+  template:
+    src: 10-sftp_config.conf.j2
+    dest: /etc/ssh/sshd_config.d/10-sftp_config.conf
+    mode: '0644'
+  notify: restart sshd
+
+- name: Ensure sshd_config.d directory exists (for older SSH versions)
+  file:
+    path: /etc/ssh/sshd_config.d
+    state: directory
+    mode: '0755'
+  when: ansible_distribution_major_version | int < 9
+
+- name: Include sshd_config.d files in main sshd_config (for older SSH versions)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: 'Include /etc/ssh/sshd_config.d/*.conf'
+    insertbefore: BOF
+    state: present
+  when: ansible_distribution_major_version | int < 9
+  notify: restart sshd
+
+- name: Configure firewall for SSH (port 22) if firewalld is running
+  firewalld:
+    service: ssh
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when: ansible_facts.services['firewalld.service'] is defined and ansible_facts.services['firewalld.service'].state == 'running'
+  ignore_errors: yes

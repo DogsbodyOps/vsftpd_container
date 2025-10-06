@@ -1,0 +1,4 @@
+{
+  "exampleuser1": "$6$rounds=656000$YourSaltHere$YourHashedPasswordHere",
+  "exampleuser2": "$6$rounds=656000$YourSaltHere$YourHashedPasswordHere"
+}
