@@ -1,0 +1,35 @@
+---
+# Example inventory file for VSFTPD/SFTP deployment
+# Copy this file to 'inventory.yml' and customize for your environment
+
+all:
+  hosts:
+    ftp-server-01:
+      ansible_host: 192.168.1.100
+      ansible_user: ansible
+      ansible_become: yes
+      ansible_python_interpreter: /usr/bin/python3
+      
+      # Override default variables per host if needed
+      vsftpd_pasv_address: "ftp.example.com"
+      vsftpd_pasv_min_port: 10000
+      vsftpd_pasv_max_port: 10250
+      
+  children:
+    ftp_servers:
+      hosts:
+        ftp-server-01:
+
+  vars:
+    # Global variables for all hosts
+    # These can be overridden at the host or group level
+    
+    # Passive mode configuration
+    # vsftpd_pasv_address: "127.0.0.1"
+    # vsftpd_pasv_min_port: 10000
+    # vsftpd_pasv_max_port: 10250
+    
+    # Enable FTPS (requires certificates)
+    # vsftpd_ssl_enable: yes
+    # vsftpd_rsa_cert_file: "/etc/vsftpd/certs/ftps-cert.pem"
+    # vsftpd_rsa_private_key_file: "/etc/vsftpd/certs/ftps-cert.key"

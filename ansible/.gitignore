@@ -1,0 +1,22 @@
+# Ignore sensitive files
+inventory.yml
+users.json
+
+# Ignore retry files
+*.retry
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+*.swp
+*~
+
+# Ignore vault password files
+.vault_pass
+vault_pass.txt
+
+# Keep example files
+!inventory.yml.example
+!users.json.example

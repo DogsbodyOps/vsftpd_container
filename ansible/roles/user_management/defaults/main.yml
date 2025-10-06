@@ -1,0 +1,24 @@
+---
+# Default variables for user management role
+
+# FTP user group
+ftp_user_group: "simpleftp"
+
+# Base directory for user home directories
+ftp_base_dir: "/data"
+
+# User configuration file (JSON format)
+user_config_file: "/etc/vsftpd/users.json"
+
+# User shell (should be /sbin/nologin for security)
+user_shell: "/sbin/nologin"
+
+# User subdirectories (created for each user)
+user_subdirectories:
+  - "in"
+  - "out"
+
+# Cron job settings for periodic user updates
+enable_user_sync_cron: yes
+user_sync_interval: "*/30 * * * *"  # Every 30 minutes
+user_sync_log_file: "/var/log/user_updates.log"

@@ -58,6 +58,30 @@ services:
 
 ---
 
+## 📦 Ansible Deployment (Non-Container)
+
+For deploying the same VSFTPD and SFTP configuration on a standard Linux server without Docker, use the included Ansible playbook:
+
+### Quick Start with Ansible
+
+```bash
+cd ansible/
+./setup.sh
+# Edit inventory.yml and users.json
+ansible-playbook site.yml
+```
+
+**Features:**
+- Installs and configures VSFTPD with the same settings as the container
+- Configures OpenSSH for SFTP with chrooted users
+- Sets up automatic user synchronization from JSON
+- Configures firewall rules automatically
+- Supports RHEL/CentOS/Rocky Linux 8+, Ubuntu 20.04+, Debian 10+
+
+See [ansible/README.md](ansible/README.md) for complete Ansible deployment documentation.
+
+---
+
 ## 📁 Directory Structure
 
 ```
@@ -76,6 +100,12 @@ services:
 │   ├── update_users.sh            # JSON -> user sync script
 │   ├── user_export.sh             # Export FTP/SFTP users from /data/* homes
 │   └── user_export_all.sh         # Export all users with UID >= 1000
+├── ansible/                       # Ansible playbook for non-container deployment
+│   ├── site.yml                   # Main playbook
+│   ├── roles/                     # Ansible roles (vsftpd, sshd_sftp, user_management)
+│   ├── inventory.yml.example      # Example inventory file
+│   ├── users.json.example         # Example user configuration
+│   └── README.md                  # Ansible deployment documentation
 ├── docker-compose.yml
 ├── Dockerfile
 └── azure-pipelines.yml

@@ -1,0 +1,17 @@
+---
+# Global variables for all hosts
+# Customize these values for your environment
+
+# Passive mode configuration - IMPORTANT: Set this to your external IP or domain
+# vsftpd_pasv_address: "ftp.example.com"
+# vsftpd_pasv_min_port: 10000
+# vsftpd_pasv_max_port: 10250
+
+# SSL/TLS Configuration (uncomment to enable FTPS)
+# vsftpd_ssl_enable: yes
+# vsftpd_rsa_cert_file: "/etc/vsftpd/certs/ftps-cert.pem"
+# vsftpd_rsa_private_key_file: "/etc/vsftpd/certs/ftps-cert.key"
+
+# User management
+# enable_user_sync_cron: yes
+# user_sync_interval: "*/30 * * * *"

@@ -1,0 +1,7 @@
+---
+# Handlers for VSFTPD role
+
+- name: restart vsftpd
+  systemd:
+    name: vsftpd
+    state: restarted

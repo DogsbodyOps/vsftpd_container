@@ -1,0 +1,7 @@
+---
+# Handlers for SFTP/SSH role
+
+- name: restart sshd
+  systemd:
+    name: sshd
+    state: restarted

@@ -1,0 +1,13 @@
+---
+# Main playbook to configure VSFTPD and SFTP server
+# This playbook replicates the configuration from the vsftpd_container Docker image
+# for deployment on a standard Linux server
+
+- name: Configure VSFTPD and SFTP Server
+  hosts: all
+  become: yes
+  
+  roles:
+    - role: vsftpd
+    - role: sshd_sftp
+    - role: user_management
