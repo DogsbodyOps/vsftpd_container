@@ -2,6 +2,8 @@
 
 This project provides a secure, containerized FTP/SFTP server based on `vsftpd` and OpenSSH. It supports user-based access with chrooted home directories, dynamic user provisioning via a JSON file.
 
+It will build 2 versions of the image, one using Redhat's UBI9-Minimal image and another using the almalinux:minmal base image.
+
 ---
 
 ## 🔧 Features
