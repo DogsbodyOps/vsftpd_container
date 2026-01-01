@@ -27,16 +27,28 @@ stages:
         containerRegistry: push-dogsbody.azurecr.io
 
     - task: Docker@2
-      displayName: Build an image
+      displayName: Build and push RHEL version
       inputs:
         command: buildAndPush
         containerRegistry: push-dogsbody.azurecr.io
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+        dockerfile: '$(Build.SourcesDirectory)/rhel_Dockerfile'
         repository: vsftpd
         # set tag based on branch name
         tags: |
-          latest
-          $(Build.SourceBranchName)
+          rhel_latest
+          rhel_$(Build.SourceBranchName)
+
+    - task: Docker@2
+      displayName: Build and push Almalinux version
+      inputs:
+        command: buildAndPush
+        containerRegistry: push-dogsbody.azurecr.io
+        dockerfile: '$(Build.SourcesDirectory)/alma_Dockerfile'
+        repository: vsftpd
+        # set tag based on branch name
+        tags: |
+          alma_latest
+          alma_$(Build.SourceBranchName)
 
 #- stage: Generate SBOM with grype
 #  displayName: Generate SBOM with grype
